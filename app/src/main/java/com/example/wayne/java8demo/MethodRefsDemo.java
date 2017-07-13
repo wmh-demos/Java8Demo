@@ -21,12 +21,9 @@ public class MethodRefsDemo {
         public int age;
         public String name;
 
-        public Person() {
-        }
-
         private Person(int age) {
             this.age = age;
-            this.name = "P-" + age;
+            this.name = "Person-" + age;
         }
 
         public static Person convert(int age) {
@@ -51,27 +48,43 @@ public class MethodRefsDemo {
         return result;
     }
 
-    public void showUsage() {
-        staticMethod();
-        instanceMethod();
-        typeMethod();
-        constructor();
-    }
-
-    private void staticMethod() {
-        List<Integer> ageList = Arrays.asList(1, 2, 3, 4, 5);
-        List<Person> personList = transform(ageList, Person::convert);
-        System.out.println("staticMethod: ");
-        System.out.println(Arrays.toString(personList.toArray()));
-    }
-
     private Person createPerson(int age) {
         return Person.convert(age);
     }
 
+    public void showUsage() {
+        staticMethod();
+        instanceMethod();
+        typeMethod();
+        constructorMethod();
+    }
+
+    private void staticMethod() {
+        List<Integer> ageList = Arrays.asList(1, 2, 3, 4, 5);
+
+//        Java 7
+//        List<Person> personsList = transform(ageList, new Transformer<Integer, Person>() {
+//            @Override
+//            public Person transform(Integer obj) {
+//                return Person.convert(obj);
+//            }
+//        });
+
+//        Java 8 with Lambda
+//        List<Person> personsList = transform(ageList, obj -> Person.convert(obj));
+
+//        Java 8 with method references
+        List<Person> personList = transform(ageList, Person::convert);
+
+        System.out.println("staticMethod: ");
+        System.out.println(Arrays.toString(personList.toArray()));
+    }
+
     private void instanceMethod() {
         List<Integer> ageList = Arrays.asList(6, 7, 8, 9, 10);
+
         List<Person> personList = transform(ageList, this::createPerson);
+
         System.out.println("instanceMethod: ");
         System.out.println(Arrays.toString(personList.toArray()));
     }
@@ -79,15 +92,19 @@ public class MethodRefsDemo {
     private void typeMethod() {
         List<Integer> ageList = Arrays.asList(1, 4, 2, 10, 6);
         List<Person> personList = transform(ageList, this::createPerson);
+
         Collections.sort(personList, Person::compareByAge);
+
         System.out.println("typeMethod: ");
         System.out.println(Arrays.toString(personList.toArray()));
     }
 
-    private void constructor() {
+    private void constructorMethod() {
         List<Integer> ageList = Arrays.asList(11, 21, 31, 41, 51);
+
         List<Person> personList = transform(ageList, Person::new);
-        System.out.println("constructor: ");
+
+        System.out.println("constructorMethod: ");
         System.out.println(Arrays.toString(personList.toArray()));
     }
 }
